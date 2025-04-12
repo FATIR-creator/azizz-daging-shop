@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Riwayat Pesanan - Aziz Daging Shop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8f5;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      background-color: #b30000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    ul {
+      padding-left: 20px;
+    }
+    .total {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .back-btn {
+      margin-top: 30px;
+      padding: 12px;
+      background-color: #b30000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .back-btn:hover {
+      background-color: #c40000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Riwayat Pesanan</h1>
+  <div class="container" id="riwayat-container">
+    <!-- Pesanan terakhir ditampilkan di sini -->
+  </div>
+
+  <script>
+    const riwayat = JSON.parse(localStorage.getItem("riwayat")) || [];
+    const container = document.getElementById("riwayat-container");
+
+    if (riwayat.length === 0) {
+      container.innerHTML = "<p>Belum ada pesanan.</p>";
+    } else {
+      const lastOrder = riwayat[riwayat.length - 1];
+      let html = `
+        <h2>Pesanan Terakhir</h2>
+        <p><strong>Nama:</strong> ${lastOrder.nama}</p>
+        <p><strong>Alamat:</strong> ${lastOrder.alamat}</p>
+        <p><strong>Metode Pembayaran:</strong> ${lastOrder.metode.toUpperCase()}</p>
+        <p><strong>Waktu Pesan:</strong> ${lastOrder.waktu}</p>
+        <h3>Rincian Produk:</h3>
+        <ul>`;
+      let total = 0;
+      lastOrder.keranjang.forEach(item => {
+        const subtotal = item.qty * item.harga;
+        total += subtotal;
+        html += `<li>${item.nama} (${item.qty} kg x Rp${item.harga.toLocaleString()}) = Rp${subtotal.toLocaleString()}</li>`;
+      });
+      html += `</ul>
+        <p class="total">Total: Rp${total.toLocaleString()}</p>
+        <button class="back-btn" onclick="window.location.href='index.html'">Kembali ke Beranda</button>
+      `;
+      container.innerHTML = html;
+    }
+  </script>
+</body>
+</html>

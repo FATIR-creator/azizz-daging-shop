@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aziz Daging Shop - Welcome</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to bottom, #fff8f5, #ffe5e5);
+        height: 100vh;
+        overflow: hidden;
+        text-align: center;
+      }
+
+      #loading {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background-color: #fff8f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 1000;
+      }
+
+      #loading img {
+        width: 100px;
+        animation: spinDog 4s linear infinite;
+      }
+
+      #loading span {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #e60000;
+      }
+
+      @keyframes spinDog {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .welcome-container {
+        max-width: 600px;
+        padding: 30px;
+        background-color: #ffffffdd;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 1.2s ease-in-out;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+      }
+
+      .welcome-container h1 {
+        color: #e60000;
+        font-size: 2rem;
+        margin-bottom: 15px;
+      }
+
+      .welcome-container p {
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+      }
+
+      .btn-belanja {
+        background-color: #e60000;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 30px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .btn-belanja:hover {
+        background-color: #cc0000;
+        transform: scale(1.05);
+      }
+
+      .btn-wa {
+        display: inline-block;
+        margin-top: 15px;
+        background-color: #25d366;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .btn-wa:hover {
+        background-color: #1ebe5d;
+        transform: scale(1.05);
+      }
+
+      .smoke {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 150px;
+        background: url('https://i.ibb.co/gPx9Mk1/smoke.gif') repeat-x;
+        background-size: cover;
+        opacity: 0.3;
+        animation: floatSmoke 6s linear infinite;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes floatSmoke {
+        0% {
+          background-position-x: 0;
+        }
+        100% {
+          background-position-x: 1000px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .welcome-container h1 {
+          font-size: 1.6rem;
+        }
+
+        .welcome-container p {
+          font-size: 1rem;
+        }
+
+        .btn-belanja, .btn-wa {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">
+      <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Ikon Anjing Loading" />
+      <span>Memuat Aziz Daging Shop...</span>
+    </div>
+
+    <div class="welcome-container">
+      <h1>Selamat Datang di Aziz Daging Shop 🥩</h1>
+      <p>Tempat terbaik untuk mendapatkan daging sapi segar dan berkualitas tinggi. Selamat berbelanja!</p>
+      <button class="btn-belanja" onclick="window.location.href='index.html'">Belanja Sekarang</button>
+      <a class="btn-wa" href="https://wa.me/628998688215?text=Halo%20Aziz%20Daging%20Shop!%20Saya%20tertarik%20dengan%20produk%20daging%20Anda." target="_blank">Chat WhatsApp</a>
+    </div>
+    <div class="smoke"></div>
+
+    <script>
+      window.addEventListener('load', function () {
+        setTimeout(() => {
+          document.getElementById('loading').style.display = 'none';
+          document.querySelector('.welcome-container').style.display = 'block';
+        }, 2000);
+      });
+    </script>
+  </body>
+</html>

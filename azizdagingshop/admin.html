@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Aziz Daging Shop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8f5;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #e60000;
+    }
+    .logout-btn {
+      float: right;
+      background-color: #e60000;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .logout-btn:hover {
+      background-color: #cc0000;
+    }
+    .filter-container, .rekap-container {
+      margin: 20px 0;
+    }
+    select {
+      padding: 5px;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #e60000;
+      color: white;
+    }
+    .new-label {
+      background-color: #28a745;
+      color: white;
+      padding: 3px 8px;
+      font-size: 12px;
+      border-radius: 5px;
+      margin-left: 5px;
+    }
+    .mark-btn, .csv-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .mark-btn:hover, .csv-btn:hover {
+      background-color: #0056b3;
+    }
+    .timestamp {
+      font-size: 12px;
+      color: gray;
+    }
+    .action-btn {
+      background-color: #ff9800;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      margin: 2px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .action-btn:hover {
+      background-color: #e68900;
+    }
+  </style>
+</head>
+<body>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+  <h1>Admin Panel</h1>
+
+  <div class="filter-container">
+    <label for="statusFilter">Filter Status: </label>
+    <select id="statusFilter" onchange="renderOrders()">
+      <option value="all">Semua</option>
+      <option value="new">Baru</option>
+      <option value="read">Selesai</option>
+    </select>
+  </div>
+
+  <div class="rekap-container">
+    <strong>Total Pesanan:</strong> <span id="totalOrders">0</span><br>
+    <strong>Estimasi Omset:</strong> Rp<span id="totalOmset">0</span>
+  </div>
+
+  <button class="csv-btn" onclick="exportToCSV()">📁 Export CSV</button>
+
+  <h2>Daftar Pesanan</h2>
+  <table id="ordersTable">
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>Alamat</th>
+        <th>Produk</th>
+        <th>Metode</th>
+        <th>Waktu</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+    function renderOrders() {
+      const filter = document.getElementById('statusFilter').value;
+      const tableBody = document.querySelector('#ordersTable tbody');
+      tableBody.innerHTML = '';
+
+      let total = 0;
+      let omset = 0;
+
+      orders.forEach((order, index) => {
+        if ((filter === 'new' && order.read) || (filter === 'read' && !order.read)) return;
+
+        total++;
+        order.items.forEach(item => omset += (parseInt(item.harga) || 0) * (parseInt(item.qty) || 0));
+
+        const tr = document.createElement('tr');
+        const isRead = order.read;
+
+        tr.innerHTML = `
+          <td>${order.nama}</td>
+          <td>${order.alamat}</td>
+          <td>${order.items.map(item => `${item.nama} (${item.qty} kg)`).join(', ')}</td>
+          <td>${order.metode}</td>
+          <td><span class="timestamp">${order.timestamp || '-'}</span></td>
+          <td>
+            ${!isRead ? '<span class="new-label">🆕</span>' : 'Selesai'}
+          </td>
+          <td>
+            ${!isRead ? `<button class="mark-btn" onclick="markRead(${index})">Tandai Selesai</button>` : ''}
+            <button class="action-btn" onclick="deleteOrder(${index})">Hapus</button>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      document.getElementById('totalOrders').textContent = total;
+      document.getElementById('totalOmset').textContent = omset.toLocaleString();
+    }
+
+    function markRead(index) {
+      orders[index].read = true;
+      localStorage.setItem('orders', JSON.stringify(orders));
+      renderOrders();
+    }
+
+    function deleteOrder(index) {
+      if (confirm('Yakin ingin menghapus pesanan ini?')) {
+        orders.splice(index, 1);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        renderOrders();
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("adminLoggedIn");
+      window.location.href = "loginadmin.html";
+    }
+
+    function exportToCSV() {
+      let csv = 'Nama,Alamat,Produk,Metode,Waktu,Status\n';
+      orders.forEach(order => {
+        const produk = order.items.map(i => `${i.nama} (${i.qty} kg)`).join(', ');
+        const waktu = order.timestamp || '-';
+        const status = order.read ? 'Selesai' : 'Baru';
+        csv += `${order.nama},${order.alamat},${produk},${order.metode},${waktu},${status}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'daftar_pesanan.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    if (!localStorage.getItem("adminLoggedIn")) {
+      window.location.href = "loginadmin.html";
+    }
+
+    renderOrders();
+  </script>
+</body>
+</html>

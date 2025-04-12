@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Produk - Aziz Daging Shop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #e60000;
+    }
+    .info {
+      margin-top: 20px;
+    }
+    .info h2 {
+      margin: 10px 0;
+      color: #333;
+    }
+    .info p {
+      font-size: 16px;
+      color: #555;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #e60000;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .back-btn:hover {
+      background-color: #cc0000;
+    }
+    .search-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .search-container input {
+      padding: 10px;
+      width: 80%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .beli-container {
+      margin-top: 20px;
+    }
+    .beli-container input {
+      padding: 8px;
+      width: 60px;
+      margin-right: 10px;
+    }
+    .beli-container button {
+      padding: 10px 20px;
+      background-color: #e60000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .beli-container button:hover {
+      background-color: #cc0000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Detail Produk</h1>
+    <div class="info">
+      <h2 id="namaProduk"></h2>
+      <p id="hargaProduk"></p>
+      <p id="deskripsiProduk"></p>
+    </div>
+
+    <div class="beli-container">
+      <input type="number" id="qty" value="1" min="1"> kg
+      <button onclick="beliProduk()">Beli</button>
+    </div>
+
+    <a class="back-btn" href="index.html">⬅ Kembali ke Beranda</a>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const nama = urlParams.get("nama") || "-";
+    const harga = urlParams.get("harga") || "0";
+
+    const deskripsiProduk = {
+      "Sandung Lamur": "Potongan daging sapi yang diambil dari bagian dada bawah, cocok untuk sup dan rendang.",
+      "Iga Sapi": "Iga sapi segar berkualitas, cocok untuk bakar atau sup iga.",
+      "Tenderloin": "Daging sapi bagian dalam yang sangat empuk, cocok untuk steak.",
+      "Sirloin": "Bagian daging sapi yang memiliki sedikit lemak, favorit untuk steak.",
+      "T-Bone": "Gabungan tenderloin dan sirloin dalam satu potongan, ideal untuk grill.",
+      "Has Dalam": "Daging sapi tanpa lemak dan sangat empuk, cocok untuk berbagai masakan.",
+      "Daging Giling": "Cocok untuk bakso, burger, dan isian masakan."
+    };
+
+    const deskripsi = deskripsiProduk[nama] || "Tidak ada deskripsi.";
+
+    document.getElementById("namaProduk").textContent = nama;
+    document.getElementById("hargaProduk").textContent = `Harga: Rp${parseInt(harga).toLocaleString()}`;
+    document.getElementById("deskripsiProduk").textContent = deskripsi;
+
+    function beliProduk() {
+      const qty = parseInt(document.getElementById("qty").value);
+      if (!qty || qty < 1) return;
+
+      const item = { nama, harga: parseInt(harga), qty };
+      const keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
+      const existing = keranjang.find(p => p.nama === nama);
+
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        keranjang.push(item);
+      }
+
+      localStorage.setItem("keranjang", JSON.stringify(keranjang));
+      window.location.href = "keranjang.html";
+    }
+  </script>
+</body>
+</html>
